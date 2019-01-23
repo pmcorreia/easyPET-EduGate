@@ -1,0 +1,18 @@
+
+/gate/digitizer/name		SinglesScanner1
+/gate/digitizer/insert		singleChain
+/gate/digitizer/SinglesScanner1/insert					systemFilter
+/gate/digitizer/SinglesScanner1/systemFilter/selectSystem	scanner1
+/gate/digitizer/SinglesScanner1/insert                        adder
+/gate/digitizer/SinglesScanner1/insert                        readout
+/gate/digitizer/SinglesScanner1/readout/setDepth              1
+
+/gate/digitizer/SinglesScanner1/insert                        blurring
+/gate/digitizer/SinglesScanner1/blurring/setResolution        0.26
+/gate/digitizer/SinglesScanner1/blurring/setEnergyOfReference 511. keV
+
+#/gate/digitizer/SinglesScanner1/insert                        thresholder
+#/gate/digitizer/SinglesScanner1/thresholder/setThreshold      350. keV
+#/gate/digitizer/SinglesScanner1/insert                        upholder
+#/gate/digitizer/SinglesScanner1/upholder/setUphold            650. keV
+

@@ -1,0 +1,80 @@
+#scanner1
+/gate/world/daughters/name                    scanner1
+/gate/world/daughters/systemType			  scanner
+/gate/world/daughters/insert                  cylinder
+/gate/scanner1/placement/setTranslation 0.0 0.0 0.0 cm
+/gate/scanner1/placement/alignToY
+/gate/scanner1/geometry/setPhiStart -90. deg
+/gate/scanner1/geometry/setDeltaPhi 180. deg
+/gate/scanner1/geometry/setRmax         70.0 mm 
+
+# cristals are separated by 57.7mm, so the radius is 28.85mm, and they have 20mm length. 
+#Considering the rotations, at least 55mm for exteral radius is needed 
+
+/gate/scanner1/geometry/setRmin         23.0 mm 
+
+#minimum distance between cristals is 57.7mm, so 23*2mm=46mm has a safety tolerance. 
+
+/gate/scanner1/geometry/setHeight       40.2 mm 
+/gate/scanner1/setMaterial              Air
+/gate/scanner1/vis/forceWireframe
+/gate/scanner1/vis/setColor             white
+
+#                                                                 #
+#-------------------oooooOOOOO00000OOOOOooooo---------------------#
+#	HEAD
+/gate/scanner1/daughters/name           head
+/gate/scanner1/daughters/insert         box
+/gate/head/placement/setTranslation           43.85 0.0 0.0 mm
+/gate/head/geometry/setXLength                30  mm
+/gate/head/geometry/setYLength                2. mm
+/gate/head/geometry/setZLength                2. mm
+/gate/head/setMaterial                        Air
+/gate/head/vis/setVisible                     1
+
+
+
+
+
+#	BLOCK
+#	BLOCK
+/gate/head/daughters/name                     block
+/gate/head/daughters/insert                   box
+/gate/block/geometry/setXLength               30. mm
+/gate/block/geometry/setYLength               2. mm
+/gate/block/geometry/setZLength               2. mm
+/gate/block/setMaterial                       Air
+/gate/block/vis/setVisible                    1
+
+#	C R Y S T A L
+/gate/block/daughters/name                    crystal
+/gate/block/daughters/insert                  box
+/gate/crystal/geometry/setXLength             30 mm
+/gate/crystal/geometry/setYLength             2. mm
+/gate/crystal/geometry/setZLength             2. mm
+/gate/crystal/setMaterial                     LYSO
+/gate/crystal/vis/setVisible                  1
+/gate/crystal/vis/setColor                        cyan
+
+
+
+
+#	A T T A C H    S Y S T E M 
+/gate/systems/scanner1/level1/attach   head
+/gate/systems/scanner1/level2/attach   block
+/gate/systems/scanner1/level3/attach   crystal
+
+
+
+#	A T T A C H    C R Y S T A L  SD
+
+/gate/crystal/attachCrystalSD
+
+
+#/gate/head/moves/insert             orbiting
+#/gate/head/orbiting/setSpeed        0.9 deg/s
+#/gate/head/orbiting/setPoint1       27.3 0 0 mm
+#/gate/head/orbiting/setPoint2       27.3 0 1 mm
+#rotation along an axis located in one end of the first cristal, parallel to the ZZ axis
+#in order to simulate a rotation between -angle->+angle, the cristal needs to start the simulation 
+#in the -angle position. By now, it starts in the angle=0 and goes to +angle

@@ -1,0 +1,9 @@
+sliceTime=01
+topStep=0.9
+topAng=9
+botStep=0.9
+numberOfTurns=1
+X=0
+Y=0
+Z=0
+source=PointGammaSource10mm.mac

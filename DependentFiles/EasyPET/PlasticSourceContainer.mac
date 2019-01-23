@@ -1,0 +1,13 @@
+#=====================================================
+#  P A R T I C L E   S O U R C E
+#=====================================================
+
+#Plastic phantom around the source
+/gate/world/daughters/name		AcrylicBox
+/gate/world/daughters/insert		box
+/gate/AcrylicBox/setMaterial		PMMA
+/gate/AcrylicBox/vis/setColor		grey
+/gate/AcrylicBox/geometry/setXLength	1. cm
+/gate/AcrylicBox/geometry/setYLength	1. cm
+/gate/AcrylicBox/geometry/setZLength	1. cm
+/gate/AcrylicBox/placement/setTranslation  3.0 0.0 3.0 mm
