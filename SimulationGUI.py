@@ -521,14 +521,14 @@ numberOfTurns='+str(numberOfTurns)+'\n')
 
         #      self.enableInputs()
         ########
-        #	started changing in 05/01/2018 - add clusterBool (always True)
+        #	started changing in 05/01/2018 - add clusterBool (always True??)
         #					- p=psubprocess if clusterBool =False
         #					- jobsplitter if clusterBool =True (end this part)
         #					- p.pid = -99999
         #					- add checkBox for clusterBool (added line in the beginning of this function)
         #					- no dropbox related code implemented in this version
         #					- need changes where any of the cluster-related variables are mentioned
-        clusterBool = True
+        clusterBool = False
 
         if not clusterBool:
             p=subprocess.Popen(["Gate "+str(OutputFilesDirectory)+"/easyPET.mac"],stdout = open(str(OutputFilesDirectory)+'/easyPETSimulationGate.out','w'), stderr = open(str(OutputFilesDirectory)+'/easyPETSimulationGate.err','w'),shell=True)

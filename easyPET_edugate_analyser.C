@@ -259,7 +259,7 @@ int main(int argc, char** argv) {
   energy_threshold_upper=std::atof(argv[5])/1000;
 
   //  chdir(rootFileDir);
-  TApplication app("ROOT Application", &argc, argv);
+  //TApplication app("ROOT Application", &argc, argv);
   //TApplication allways after the parameter argv load, like   std::strcpy(rootFileDir,argv[1]);
 
 

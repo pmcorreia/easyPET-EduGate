@@ -1,0 +1,2 @@
+1st run 'sh dependencies.sh' to compile needed packages
+Then run python SimulationGUI.py to start the user interface
