@@ -1,2 +1,8 @@
 1st run 'sh dependencies.sh' to compile needed packages
 Then run python SimulationGUI.py to start the user interface
+
+It's recomended to use a dedicated Anaconda environment to run the GUI. After install Anaconda, in the command prompt, configure conda using:
+
+'conda create -n easyPET-simulations-environment python=3.5 pyqt=4 numpy scipy matplotlib scikit-image scikit-learn'
+'conda activate easyPET-simulations-environment'
+
