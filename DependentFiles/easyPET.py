@@ -144,14 +144,14 @@ fh.write('#  *******************************************************\n\
 #=====================================================\n\
 \n\
 /vis/disable\n\
-/vis/open                           OGLSQt\n\
-/vis/viewer/set/viewpointThetaPhi   0 0\n\
-/vis/viewer/zoom                    2.0\n\
-/vis/drawVolume\n\
+#/vis/open                           OGLSQt\n\
+#/vis/viewer/set/viewpointThetaPhi   0 0\n\
+#/vis/viewer/zoom                    2.0\n\
+#/vis/drawVolume\n\
 #/tracking/storeTrajectory           1\n\
 #/vis/scene/add/trajectories\n\
 #/vis/scene/endOfEventAction         accumulate\n\
-/vis/scene/add/axes\n\
+#/vis/scene/add/axes\n\
 \n\
 \n\
 #=====================================================\n\

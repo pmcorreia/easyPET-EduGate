@@ -29,6 +29,18 @@ file.write("\n\
 /gate/Container"+str(SourceID)+"/geometry/setZLength    1. cm\n\
 /gate/Container"+str(SourceID)+"/placement/setTranslation  "+str(positionX)+" "+str(positionY)+" "+str(positionZ)+" mm\n\
 \n\
+#=====================================================\n\
+# INITIALISATION\n\
+#=====================================================\n\
+\n\
+#initialization was moved to the source file\n\
+/gate/run/initialize\n\
+\n\
+#################\n\
+#               #\n\
+#  S O U R C E  #\n\
+#               #\n\
+#################\n\
 \n\
 /gate/source/addSource                                  na22_"+str(SourceID)+"\n\
 /gate/source/na22_"+str(SourceID)+"/setActivity         10 muCi\n\

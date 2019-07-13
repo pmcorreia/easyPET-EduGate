@@ -314,8 +314,8 @@ fh.write('\n\
 #=====================================================\n\
 \n\
 /gate/application/setTimeSlice   '+str(sliceTime)+' s\n\
-/gate/application/setTimeStart   2025   s\n\
-/gate/application/setTimeStop    2430 s\n\
+/gate/application/setTimeStart   '+str(startTime)+'   s\n\
+/gate/application/setTimeStop    '+str(endTime)+' s\n\
 \n\
 /gate/application/startDAQ\n\
 \n\

@@ -24,25 +24,35 @@ file.write("\n\
 /gate/world/daughters/insert            box\n\
 /gate/Container"+str(SourceID)+"/setMaterial            PMMA\n\
 /gate/Container"+str(SourceID)+"/vis/setColor           grey\n\
-/gate/Container"+str(SourceID)+"/geometry/setXLength    12.7 mm\n\
-/gate/Container"+str(SourceID)+"/geometry/setYLength    12.7 mm\n\
-/gate/Container"+str(SourceID)+"/geometry/setZLength    5.08 mm #4.318+0.381*2the transparent window has 0.015 inch\n\
+/gate/Container"+str(SourceID)+"/geometry/setXLength    1. cm\n\
+/gate/Container"+str(SourceID)+"/geometry/setYLength    1. cm\n\
+/gate/Container"+str(SourceID)+"/geometry/setZLength    1. cm\n\
 /gate/Container"+str(SourceID)+"/placement/setTranslation  "+str(positionX)+" "+str(positionY)+" "+str(positionZ)+" mm\n\
 \n\
+#=====================================================\n\
+# INITIALISATION\n\
+#=====================================================\n\
+\n\
+#initialization was moved to the source file\n\
+/gate/run/initialize\n\
+\n\
+#################\n\
+#               #\n\
+#  S O U R C E  #\n\
+#               #\n\
+#################\n\
 \n\
 /gate/source/addSource                                  na22_"+str(SourceID)+"\n\
 /gate/source/na22_"+str(SourceID)+"/setActivity         10 muCi\n\
-/gate/source/na22_"+str(SourceID)+"/gps/particle        ion\n\
-/gate/source/na22_"+str(SourceID)+"/gps/ion		11 22 0 0\n\
-/gate/source/na22_"+str(SourceID)+"/gps/monoenergy	0. keV\n\
+/gate/source/na22_"+str(SourceID)+"/gps/particle        gamma\n\
+/gate/source/na22_"+str(SourceID)+"/setType             backtoback\n\
+/gate/source/na22_"+str(SourceID)+"/gps/monoenergy	511 keV\n\
 /gate/source/na22_"+str(SourceID)+"/gps/type	        Volume\n\
-/gate/source/na22_"+str(SourceID)+"/gps/shape	        Cylinder\n\
-/gate/source/na22_"+str(SourceID)+"/gps/radius	        1.27 mm #2.54/2\n\
-/gate/source/na22_"+str(SourceID)+"/gps/halfz		2.159 mm #4.318 mm\n\
+/gate/source/na22_"+str(SourceID)+"/gps/shape	        Sphere\n\
+/gate/source/na22_"+str(SourceID)+"/gps/radius	        0.125 mm \n\
 /gate/source/na22_"+str(SourceID)+"/gps/angtype	        iso\n\
 /gate/source/na22_"+str(SourceID)+"/attachTo		Container"+str(SourceID)+"\n\
-/gate/source/na22_"+str(SourceID)+"/setForcedUnstableFlag	true\n\
-/gate/source/na22_"+str(SourceID)+"/useDefaultHalfLife\n\
+/gate/source/na22_"+str(SourceID)+"/setForcedUnstableFlag false\n\
 \n\
 /gate/source/na22_"+str(SourceID)+"/visualize 200 yellow 3\n\
 # The particles emitted by the source are gammas")

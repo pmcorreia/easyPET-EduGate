@@ -11,6 +11,8 @@ positionX=float(sys.argv[2])
 positionY=float(sys.argv[3])
 positionZ=float(sys.argv[4])
 
+OutputFilesDirectory=sys.argv[5]
+
 activity = 10 #in uCi
 
 SourceFile=SourceFileExecutable[:-3]+'_ID_'+str(SourceID)+'.mac'
@@ -644,6 +646,59 @@ file.write("\n\
 \n\
 \n\
 #=====================================================\n\
+#   D I G I T I Z E R: DETECTOR ELECTRONIC RESPONSE\n\
+#=====================================================\n\
+\n\
+/control/execute	 "+OutputFilesDirectory+"/digitizerScanner1.mac\n\
+\n\
+/control/execute	 "+OutputFilesDirectory+"/digitizerScanner2.mac\n\
+\n\
+\n\
+#=====================================================\n\
+#	C O I N C I D E N C E    S O R T E R\n\
+#===================================================== \n\
+\n\
+\n\
+\n\
+#/gate/digitizer/name                            delay\n\
+#/gate/digitizer/insert                          coincidenceSorter\n\
+#/gate/digitizer/delay/setWindow                 10. ns\n\
+#/gate/digitizer/delay/setOffset                 500. ns\n\
+#/gate/digitizer/delay/setOffset                 500. ns\n\
+\n\
+#=====================================================\n\
+# PHYSICS\n\
+#=====================================================\n\
+\n\
+/gate/physics/addPhysicsList emstandard_opt2\n\
+/gate/physics/addProcess			Decay\n\
+/gate/physics/addProcess			RadioactiveDecay\n\
+/gate/physics/addProcess            PositronAnnihilation\n\
+##\n\
+\n\
+\n\
+/gate/physics/processList Enabled\n\
+/gate/physics/processList Initialized\n\
+\n\
+#=====================================================\n\
+# CUTS\n\
+#=====================================================\n\
+\n\
+/gate/physics/Gamma/SetCutInRegion      body_hollow_water 0.1 mm\n\
+/gate/physics/Electron/SetCutInRegion   body_hollow_water 0.1 mm\n\
+/gate/physics/Positron/SetCutInRegion   body_hollow_water 0.1 mm\n\
+#/gate/physics/processes/PhotoElectric/setXRayCut 100. keV\n\
+#/gate/physics/processes/PhotoElectric/setDeltaRayCut 100. keV\n\
+/gate/physics/processes/PhotoElectric/setXRayCut 100. keV\n\
+/gate/physics/processes/PhotoElectric/setDeltaRayCut 100. keV\n\
+#/gate/physics/gamma/setElectronCut 1. km\n\
+\n\
+\n\
+\n\
+\n\
+/gate/geometry/rebuild\n\
+\n\
+#=====================================================\n\
 # INITIALISATION\n\
 #=====================================================\n\
 \n\
@@ -671,15 +726,15 @@ file.write("\n\
 # Set the activity\n\
 /gate/source/addSource F18Main_"+str(SourceID)+"\n\
 /gate/source/F18Main_"+str(SourceID)+"/setActivity 11000000. becquerel #Properly is 3700000 in units Bq\n\
-/gate/source/F18Main_"+str(SourceID)+"/gps/particle e+\n\
+#/gate/source/F18Main_"+str(SourceID)+"/gps/particle e+\n\
 \n\
 #add back-to-back\n\
-#/gate/source/F18Main_"+str(SourceID)+"/gps/setType backtoback\n\
-#/gate/source/F18Main_"+str(SourceID)+"/gps/particle gamma\n\
-#/gate/source/F18Main_"+str(SourceID)+"/gps/monoenergy 511. keV\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/setType backtoback\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/particle gamma\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/monoenergy 511. keV\n\
 \n\
-/gate/source/F18Main_"+str(SourceID)+"/setForcedUnstableFlag true\n\
-/gate/source/F18Main_"+str(SourceID)+"/setForcedHalfLife 6586.2 s\n\
+#/gate/source/F18Main_"+str(SourceID)+"/setForcedUnstableFlag true\n\
+#/gate/source/F18Main_"+str(SourceID)+"/setForcedHalfLife 6586.2 s\n\
 \n\
 # Set the geometry large main volume\n\
 /gate/source/F18Main_"+str(SourceID)+"/gps/type Volume\n\
