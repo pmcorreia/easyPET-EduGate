@@ -11,7 +11,6 @@ positionX=float(sys.argv[2])
 positionY=float(sys.argv[3])
 positionZ=float(sys.argv[4])
 
-OutputFilesDirectory=sys.argv[5]
 
 activity = 10 #in uCi
 
@@ -646,41 +645,6 @@ file.write("\n\
 \n\
 \n\
 #=====================================================\n\
-#   D I G I T I Z E R: DETECTOR ELECTRONIC RESPONSE\n\
-#=====================================================\n\
-\n\
-/control/execute	 "+OutputFilesDirectory+"/digitizerScanner1.mac\n\
-\n\
-/control/execute	 "+OutputFilesDirectory+"/digitizerScanner2.mac\n\
-\n\
-\n\
-#=====================================================\n\
-#	C O I N C I D E N C E    S O R T E R\n\
-#===================================================== \n\
-\n\
-\n\
-\n\
-#/gate/digitizer/name                            delay\n\
-#/gate/digitizer/insert                          coincidenceSorter\n\
-#/gate/digitizer/delay/setWindow                 10. ns\n\
-#/gate/digitizer/delay/setOffset                 500. ns\n\
-#/gate/digitizer/delay/setOffset                 500. ns\n\
-\n\
-#=====================================================\n\
-# PHYSICS\n\
-#=====================================================\n\
-\n\
-/gate/physics/addPhysicsList emstandard_opt2\n\
-/gate/physics/addProcess			Decay\n\
-/gate/physics/addProcess			RadioactiveDecay\n\
-/gate/physics/addProcess            PositronAnnihilation\n\
-##\n\
-\n\
-\n\
-/gate/physics/processList Enabled\n\
-/gate/physics/processList Initialized\n\
-\n\
-#=====================================================\n\
 # CUTS\n\
 #=====================================================\n\
 \n\
@@ -740,9 +704,13 @@ file.write("\n\
 /gate/source/F18Main_"+str(SourceID)+"/gps/type Volume\n\
 /gate/source/F18Main_"+str(SourceID)+"/gps/shape Cylinder\n\
 /gate/source/F18Main_"+str(SourceID)+"/gps/radius 15. mm\n\
-/gate/source/F18Main_"+str(SourceID)+"/gps/halfz 2. mm\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/halfz 1 mm\n\
 /gate/source/F18Main_"+str(SourceID)+"/gps/angtype iso\n\
-/gate/source/F18Main_"+str(SourceID)+"/gps/centre 0. 0. 0. mm #this plus halffz allows to simulate only the 2D disk formed by the detectors\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/mintheta 90. deg\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/maxtheta 90. deg\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/minphi 0. deg\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/maxphi 360. deg\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/centre 0 0 0 mm\n\
 \n\
 # Now make sure there's no activity in the cold areas\n\
 /gate/source/F18Main_"+str(SourceID)+"/gps/Forbid top_cover_chamber_1\n\

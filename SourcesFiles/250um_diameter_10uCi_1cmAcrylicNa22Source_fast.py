@@ -51,6 +51,10 @@ file.write("\n\
 /gate/source/na22_"+str(SourceID)+"/gps/shape	        Sphere\n\
 /gate/source/na22_"+str(SourceID)+"/gps/radius	        0.125 mm \n\
 /gate/source/na22_"+str(SourceID)+"/gps/angtype	        iso\n\
+/gate/source/na22_"+str(SourceID)+"/gps/mintheta 90. deg\n\
+/gate/source/na22_"+str(SourceID)+"/gps/maxtheta 90. deg\n\
+/gate/source/na22_"+str(SourceID)+"/gps/minphi 0. deg\n\
+/gate/source/na22_"+str(SourceID)+"/gps/maxphi 360. deg\n\
 /gate/source/na22_"+str(SourceID)+"/attachTo		Container"+str(SourceID)+"\n\
 /gate/source/na22_"+str(SourceID)+"/setForcedUnstableFlag false\n\
 \n\

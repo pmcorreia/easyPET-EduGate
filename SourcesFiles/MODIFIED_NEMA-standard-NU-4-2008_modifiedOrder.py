@@ -11,7 +11,6 @@ positionX=float(sys.argv[2])
 positionY=float(sys.argv[3])
 positionZ=float(sys.argv[4])
 
-OutputFilesDirectory=sys.argv[5]
 
 activity = 10 #in uCi
 
@@ -644,39 +643,6 @@ file.write("\n\
 /gate/wide_hole_lid/attachPhantomSD\n\
 /gate/wide_o_ring/attachPhantomSD\n\
 \n\
-\n\
-#=====================================================\n\
-#   D I G I T I Z E R: DETECTOR ELECTRONIC RESPONSE\n\
-#=====================================================\n\
-\n\
-/control/execute	 "+OutputFilesDirectory+"/digitizerScanner1.mac\n\
-\n\
-/control/execute	 "+OutputFilesDirectory+"/digitizerScanner2.mac\n\
-\n\
-\n\
-#=====================================================\n\
-#	C O I N C I D E N C E    S O R T E R\n\
-#===================================================== \n\
-\n\
-\n\
-\n\
-#/gate/digitizer/name                            delay\n\
-#/gate/digitizer/insert                          coincidenceSorter\n\
-#/gate/digitizer/delay/setWindow                 10. ns\n\
-#/gate/digitizer/delay/setOffset                 500. ns\n\
-#/gate/digitizer/delay/setOffset                 500. ns\n\
-\n\
-#=====================================================\n\
-# PHYSICS\n\
-#=====================================================\n\
-\n\
-/gate/physics/addPhysicsList emstandard_opt2\n\
-/gate/physics/addProcess			Decay\n\
-/gate/physics/addProcess			RadioactiveDecay\n\
-/gate/physics/addProcess            PositronAnnihilation\n\
-##\n\
-\n\
-\n\
 /gate/physics/processList Enabled\n\
 /gate/physics/processList Initialized\n\
 \n\
@@ -692,8 +658,6 @@ file.write("\n\
 /gate/physics/processes/PhotoElectric/setXRayCut 100. keV\n\
 /gate/physics/processes/PhotoElectric/setDeltaRayCut 100. keV\n\
 #/gate/physics/gamma/setElectronCut 1. km\n\
-\n\
-\n\
 \n\
 \n\
 /gate/geometry/rebuild\n\
