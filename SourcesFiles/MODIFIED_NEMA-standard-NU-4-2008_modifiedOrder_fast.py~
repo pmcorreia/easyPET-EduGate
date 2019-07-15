@@ -693,7 +693,7 @@ file.write("\n\
 #/gate/source/F18Main_"+str(SourceID)+"/gps/particle e+\n\
 \n\
 #add back-to-back\n\
-/gate/source/F18Main_"+str(SourceID)+"/setType backtoback\n\
+/gate/source/F18Main_"+str(SourceID)+"/gps/setType backtoback\n\
 /gate/source/F18Main_"+str(SourceID)+"/gps/particle gamma\n\
 /gate/source/F18Main_"+str(SourceID)+"/gps/monoenergy 511. keV\n\
 \n\
