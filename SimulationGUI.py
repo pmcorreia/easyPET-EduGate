@@ -35,18 +35,14 @@ sys.path.insert(0,os.path.dirname(os.path.realpath(__file__))+'/SimulationGUI')
 print(os.path.dirname(os.path.realpath(__file__))+'/SimulationGUI')
 #sys.path.insert(0, os.getcwd()+'/SimulationGUI')
 import Simulations
+from jobcontrol import is_running, tail, kill
 
 import scipy
 import shlex
+from shutil import copyfile
 
-
-def is_process_running(process_id):
-    try:
-        os.kill(process_id, 0)
-        return True
-    except OSError:
-        return False
-
+class ProgressClass(QtCore.QObject):
+    valueUpdated = QtCore.pyqtSignal(int, int)
 
 
 class OtherClass(QtCore.QObject):
@@ -83,7 +79,7 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
         self.StartSimulation_pushButton.clicked.connect(self.startSimulationParametersFnc)
         self.StartSimulation_pushButton.clicked.connect(self.myButtonSlot)
         self.abortSimulation_Button.clicked.connect(self.abortSimulation_Fnc)
-        self.RunningSimulation_listWidget.itemClicked.connect(self.unlockAbortButton_Fnc)
+        self.RunningSimulation_tableWidget.itemClicked.connect(self.unlockAbortButton_Fnc)
         self.StartSimulation_pushButton.clicked.connect(self.unlockAbortButton_Fnc) #added if Sim Start, then remove files and processes enabled
         self.StartAnalysis_pushButton.clicked.connect(self.analyse_openMP)
         self.SelectResults_Button.clicked.connect(self.browse_AnalysisFile)
@@ -117,10 +113,14 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
         self.outputSimulationSelected = False
         self.sourceSelected = False
         self.resultsSelected = False
+        self.clusterBool = False
 
 
         self.otherclass = OtherClass(self)
         self.otherclass.valueUpdated.connect(self.handleValueUpdated)
+
+        self.progressclass = ProgressClass(self)
+        self.progressclass.valueUpdated.connect(self.handleProgress)
 
 
         self.fig = Figure(dpi=100)
@@ -152,14 +152,14 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
     def energy_threshold_Fnc(self):
         a=float(str(self.energy_threshold_lower_doubleSpinBox.value()))
         b=float(str(self.energy_threshold_upper_doubleSpinBox.value()))
-        if (b>a):
-            self.energy_threshold_lower=a
-            self.energy_threshold_upper=b
-        else:
-            self.energy_threshold_lower=a
-            self.energy_threshold_upper=a+1
-            self.energy_threshold_lower_doubleSpinBox.setValue(self.energy_threshold_lower)
-            self.energy_threshold_upper_doubleSpinBox.setValue(self.energy_threshold_upper)
+        #if (b>a):
+        #    self.energy_threshold_lower=a
+        #    self.energy_threshold_upper=b
+        #else:
+        #    self.energy_threshold_lower=a
+        #    self.energy_threshold_upper=a+1
+        #    self.energy_threshold_lower_doubleSpinBox.setValue(self.energy_threshold_lower)
+        #    self.energy_threshold_upper_doubleSpinBox.setValue(self.energy_threshold_upper)
 
     def cmapname_comboBox_Fnc (self):
         try:
@@ -259,7 +259,7 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
 
         self.axes1_energy = self.fig_energy.add_subplot(gs[0,0],sharey=None,sharex=None)
         self.axes2_energy = self.fig_energy.add_subplot(gs[1:2,0],sharey=None,sharex=self.axes1_energy)
-
+        
         self.axes1_energy.patch.set_alpha(0)
         self.axes2_energy.patch.set_alpha(0)
         self.axes1_energy.set_xlim(0, 1500)
@@ -281,6 +281,8 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
             self.axes2_energy.hist(y, 100, facecolor='r', alpha=0.75)
 
             plt.setp(self.axes1_energy.get_xticklabels(), visible=False)
+            self.axes2_energy.set_xlabel(str("Gamma Energy [keV]"))
+            self.axes2_energy.set_ylabel(str("Counts"))
             self.fig_energy.canvas.draw()
 
         except Exception as e:
@@ -393,7 +395,7 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
         rowPosition=self.SourcesList_listWidget.rowCount()
         if rowPosition==0:
             self.startButtonDisable()
-
+            
     def outputSimulationFile(self):
         self.OutputSimulationDirStr = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
         self.SelectSimulationOutput_lineEdit.setText(self.OutputSimulationDirStr)
@@ -417,9 +419,19 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
 
     def myButtonSlot(self):
         self.otherclass.method()
+        
 
     def handleValueUpdated(self, value):
         self.progressBar.setValue(value)
+        QtGui.qApp.processEvents()
+        
+    def handleProgress(self,value, row):#row
+        try:
+            self.RunningSimulation_tableWidget.setItem(row, 1, QtGui.QTableWidgetItem(str(value))) #added/changed - pathname to outputfilesdirect
+            item = self.RunningSimulation_tableWidget.itemAt(row, 1)
+            item.setTextAlignment(QtCore.Qt.AlignCenter)
+        except:
+            pass
         QtGui.qApp.processEvents()
 
         # Execute browse_folder function
@@ -430,20 +442,27 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
 
     def abortSimulation_Fnc(self):
 	#self.OutputSimulationDirStr = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory")) #added
-        simulationToAbort=str(self.RunningSimulation_listWidget.currentItem().text())
+        simulationToAbort=str(self.RunningSimulation_tableWidget.currentItem().text()).split('/')[-1]
         #print(self.processes)
         #print("Pid="+self.processes[simulationToAbort])
-        #self.RunningSimulation_listWidget.takeItem(self.RunningSimulation_listWidget.currentRow())
-        #processToKill=int(self.processes[simulationToAbort])
-        #os.kill(processToKill,signal.SIGKILL)
+        #self.RunningSimulation_tableWidget.takeItem(self.RunningSimulation_tableWidget.currentRow())
+        print(simulationToAbort)
+        print(self.processes)
         self.processes_stat[simulationToAbort]=False
 	#pathJobSplitOut = str(self.OutputSimulationDirStr)+'/'+str(self.processes_dir.keys()[0])+'/easyPET_jobsplit.out'
-        pathJobSplitOut = str(simulationToAbort)+'/easyPET_jobsplit.out'
-        print(pathJobSplitOut)
-        jobSplitOut = open(pathJobSplitOut, 'r')
-        for line in jobSplitOut.readlines():
-            os.system('qdel '+str(line))
-        self.RunningSimulation_listWidget.takeItem(self.RunningSimulation_listWidget.currentRow())
+        if self.clusterBool:
+            pathJobSplitOut = str(simulationToAbort)+'/easyPET_jobsplit.out'
+            print(pathJobSplitOut)
+            jobSplitOut = open(pathJobSplitOut, 'r')
+            for line in jobSplitOut.readlines():
+                os.system('qdel '+str(line))
+        else:
+            processToKill=int(self.processes[simulationToAbort])
+            print('Ill kill process '+str(processToKill))
+            os.system('kill -9 '+str(processToKill))
+            
+        self.RunningSimulation_tableWidget.removeRow(self.RunningSimulation_tableWidget.currentRow())
+
         #os.system('rm -r '+str(self.processes_dir[simulationToAbort]))
 
 
@@ -511,7 +530,12 @@ numberOfTurns='+str(numberOfTurns)+'\n')
 
         subprocess.call(["python","DependentFiles/easyPET.py",str(OutputFilesDirectory)] , stdout = open(str(OutputFilesDirectory)+"/easyPET_auxiliar.out",'w'), stderr = open(str(OutputFilesDirectory)+"/easyPET_auxiliar.err",'w'))
         print("Begin of simulation")
-        self.RunningSimulation_listWidget.addItem(OutputFilesDirectory) #added/changed - pathname to outputfilesdirectory
+        
+        rowPosition=self.RunningSimulation_tableWidget.rowCount()
+        self.RunningSimulation_tableWidget.insertRow(rowPosition) #added/changed - pathname to outputfilesdirectory
+        self.RunningSimulation_tableWidget.setItem(rowPosition, 0, QtGui.QTableWidgetItem(OutputFilesDirectory)) #added/changed - pathname to outputfilesdirectory 
+
+        self.progressclass.valueUpdated.emit(0, rowPosition)
         self.Simulationname_lineEdit.setText(pathName)
 
         ExampleGUIApp.progressBarRunning=False
@@ -528,10 +552,10 @@ numberOfTurns='+str(numberOfTurns)+'\n')
         #					- add checkBox for clusterBool (added line in the beginning of this function)
         #					- no dropbox related code implemented in this version
         #					- need changes where any of the cluster-related variables are mentioned
-        clusterBool = False
+        clusterBool = self.clusterBool
 
         if not clusterBool:
-            p=subprocess.Popen(["Gate "+str(OutputFilesDirectory)+"/easyPET.mac"],stdout = open(str(OutputFilesDirectory)+'/easyPETSimulationGate.out','w'), stderr = open(str(OutputFilesDirectory)+'/easyPETSimulationGate.err','w'),shell=True)
+            p=subprocess.Popen(["Gate "+str(OutputFilesDirectory)+"/easyPET.mac"],stdout = open(str(OutputFilesDirectory)+'/easyPETSimulationGate.out','w'),stderr = open(str(OutputFilesDirectory)+'/easyPETSimulationGate.err','w'),shell=True, executable='/bin/bash')
         else:
             p=subprocess.Popen(["python","jobSplitter_easyPET.py",str(OutputFilesDirectory)+'/easyPET.mac'] ,stdout = open(str(OutputFilesDirectory)+"/easyPET_jobsplit.out",'w'), stderr = open(str(OutputFilesDirectory)+"/easyPET_jobsplit.err",'w'))
         if clusterBool:
@@ -539,30 +563,62 @@ numberOfTurns='+str(numberOfTurns)+'\n')
         self.processes[str(pathName)] = str(p.pid)
         self.processes_stat[str(pathName)] = True
         self.processes_dir[str(pathName)] = pathName
-
         print(self.processes)
 
         isRunning=True
         #pid = p.pid
         #
-        if not clusterBool:
-            while is_process_running(p.pid):
-                time.sleep(1)
-                p.communicate()
-                pid = p.pid
+        init_time = time.time()
+        self.progressclass.valueUpdated.emit(0,rowPosition )
 
+        current_slice = 0
+        nSlices = 1
+        simulation_finished = False
+        
+        while not os.path.exists(str(OutputFilesDirectory)+'/easyPETSimulationGate.out'):
+            time.sleep(1)
+        time.sleep(1)
+        try:
+            output = subprocess.check_output(['head','-400',str(OutputFilesDirectory)+'/easyPETSimulationGate.out']).decode('ascii')
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
+        
+        for line in output.splitlines():
+            if "[Acquisition-0] Simulation will have  = " in line:
+                print(line)
+                temp_string = line.split(" = ")[1]
+                nSlices = temp_string.split(" ")[0]
+                
+        if not clusterBool:
+            currentSlice = 0
+            while is_running(p.pid) and not simulation_finished:
+                try:
+                    copyfile(str(OutputFilesDirectory)+'/easyPETSimulationGate.out',str(OutputFilesDirectory)+'/out_temp')
+                    output_lines = tail(str(OutputFilesDirectory)+'/out_temp', 30)
+                    for line in output_lines:
+                        if "[Acquisition-0] Slice" in line:
+                            #print(line)
+                            currentSlice = line.split()[2]
+                        elif "[Core-0] End of macro" in line:
+                            print("Found -End of Macro-")
+                            os.system('kill -9 '+str(p.pid))
+                            simulation_finished = True
+                    os.remove(str(OutputFilesDirectory)+'/out_temp')                    
+                    percentage = 100 * int(currentSlice)/int(nSlices)
+                    self.progressclass.valueUpdated.emit(percentage, rowPosition)
+                except subprocess.CalledProcessError as e:
+                    raise RuntimeError("command '{}' return with error (code {}): {}".format(e.cmd, e.returncode, e.output))
+                    print('Ended')
+
+                
         if (self.processes_stat[str(pathName)] is True):
-            remove_selected_item=self.RunningSimulation_listWidget.findItems(pathName,QtCore.Qt.MatchExactly)
+            print(pathName)
+            print(str(pathName))
+            remove_selected_item=self.RunningSimulation_tableWidget.findItems(str(pathName),QtCore.Qt.MatchContains)    
             for item in remove_selected_item:
-                self.RunningSimulation_listWidget.takeItem(self.RunningSimulation_listWidget.row(item))
+                self.RunningSimulation_tableWidget.removeRow(self.RunningSimulation_tableWidget.row(item))
             del self.processes[str(pathName)]
             del self.processes_stat[str(pathName)]
-
-
-#
-#
-# ended modified segment
-######
 
 
     def analyse_openMP(self):

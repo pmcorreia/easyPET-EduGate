@@ -105,6 +105,49 @@
              </item>
              <item>
               <layout class="QGridLayout" name="gridLayout_5">
+               <item row="0" column="0">
+                <widget class="QPushButton" name="SelectSimulationOutput_Button">
+                 <property name="text">
+                  <string>Select Simulation Output</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="SelectSimulationOutput_lineEdit">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="text">
+                  <string>Simulation path directory not selected</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QFrame" name="frame_10">
+                 <property name="frameShape">
+                  <enum>QFrame::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_11">
+                  <item>
+                   <widget class="QPushButton" name="SelectSource_Button">
+                    <property name="text">
+                     <string>Select source file</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QPushButton" name="RemoveSource_pushButton">
+                    <property name="text">
+                     <string>Remove File</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
                <item row="2" column="1">
                 <widget class="QTableWidget" name="SourcesList_listWidget">
                  <property name="sizePolicy">
@@ -119,6 +162,9 @@
                    <height>16777215</height>
                   </size>
                  </property>
+                 <property name="autoFillBackground">
+                  <bool>false</bool>
+                 </property>
                  <property name="alternatingRowColors">
                   <bool>true</bool>
                  </property>
@@ -126,7 +172,7 @@
                   <enum>Qt::ElideMiddle</enum>
                  </property>
                  <attribute name="horizontalHeaderVisible">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </attribute>
                  <attribute name="horizontalHeaderCascadingSectionResizes">
                   <bool>true</bool>
@@ -160,7 +206,7 @@
                  </attribute>
                  <column>
                   <property name="text">
-                   <string>Source position [mm]</string>
+                   <string>Source name and position [mm]</string>
                   </property>
                   <property name="font">
                    <font>
@@ -202,49 +248,6 @@
                    </font>
                   </property>
                  </column>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QPushButton" name="SelectSimulationOutput_Button">
-                 <property name="text">
-                  <string>Select Simulation Output</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QFrame" name="frame_10">
-                 <property name="frameShape">
-                  <enum>QFrame::StyledPanel</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_11">
-                  <item>
-                   <widget class="QPushButton" name="SelectSource_Button">
-                    <property name="text">
-                     <string>Select source file</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item>
-                   <widget class="QPushButton" name="RemoveSource_pushButton">
-                    <property name="text">
-                     <string>Remove File</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="SelectSimulationOutput_lineEdit">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Simulation path directory not selected</string>
-                 </property>
                 </widget>
                </item>
               </layout>
@@ -670,7 +673,21 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout">
               <item>
-               <widget class="QListWidget" name="RunningSimulation_listWidget"/>
+               <widget class="QTableWidget" name="RunningSimulation_tableWidget">
+                <property name="editTriggers">
+                 <set>QAbstractItemView::NoEditTriggers</set>
+                </property>
+                <column>
+                 <property name="text">
+                  <string>Simulation Path</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>% Complete</string>
+                 </property>
+                </column>
+               </widget>
               </item>
               <item>
                <widget class="QPushButton" name="abortSimulation_Button">
