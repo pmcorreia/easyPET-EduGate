@@ -11,6 +11,10 @@ import signal
 import DraggableColorbar
 import re #added
 #
+#to avoid Recursion Limit Exceed
+sys.setrecursionlimit(100000)
+#
+
 import matplotlib
 #matplotlib.use('TkAgg')
 import numpy as np
@@ -30,6 +34,8 @@ from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 #from matplotlibwidget import *
 from matplotlib.gridspec import GridSpec
+from matplotlib import rcParams
+rcParams.update({'figure.autolayout': True})
 
 sys.path.insert(0,os.path.dirname(os.path.realpath(__file__))+'/SimulationGUI')
 print(os.path.dirname(os.path.realpath(__file__))+'/SimulationGUI')
@@ -152,6 +158,9 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
     def energy_threshold_Fnc(self):
         a=float(str(self.energy_threshold_lower_doubleSpinBox.value()))
         b=float(str(self.energy_threshold_upper_doubleSpinBox.value()))
+        self.energy_threshold_lower = a
+        self.energy_threshold_upper = b
+        
         #if (b>a):
         #    self.energy_threshold_lower=a
         #    self.energy_threshold_upper=b
@@ -262,27 +271,28 @@ class ExampleGUIApp(QtGui.QMainWindow, Simulations.Ui_MainWindow):
         
         self.axes1_energy.patch.set_alpha(0)
         self.axes2_energy.patch.set_alpha(0)
-        self.axes1_energy.set_xlim(0, 1500)
-        self.axes2_energy.set_xlim(0, 1500)
+        self.axes1_energy.set_xlim(0, 1000)
+        self.axes2_energy.set_xlim(0, 1000)
 
 
 
         #self.axes1_energy.imshow(np.random.random((100, 100)))
         #self.axes2_energy.imshow(np.random.random((100, 100)))
         energyFile=str(self.SelectResultsString[:-5]+'.energy')
-    	
 	
         print(energyFile)
         try:
             x, y = np.loadtxt(energyFile, delimiter=' ', usecols=(0, 1), unpack=True)
+            self.coincidence_lcdNumber.display(len(x))
             x=x*1000;
             y=y*1000;
-            self.axes1_energy.hist(x, 100, facecolor='g', alpha=0.75)
-            self.axes2_energy.hist(y, 100, facecolor='r', alpha=0.75)
+            self.axes1_energy.hist(x, 100, facecolor='g', alpha=0.75, range=(0, 1000))
+            self.axes2_energy.hist(y, 100, facecolor='r', alpha=0.75, range=(0, 1000))
 
             plt.setp(self.axes1_energy.get_xticklabels(), visible=False)
             self.axes2_energy.set_xlabel(str("Gamma Energy [keV]"))
             self.axes2_energy.set_ylabel(str("Counts"))
+            plt.tight_layout()
             self.fig_energy.canvas.draw()
 
         except Exception as e:
@@ -652,7 +662,7 @@ numberOfTurns='+str(numberOfTurns)+'\n')
         
 ## ended - lack .sino and .energy paths - it fetches the path created by the file originally selected
 			
-
+        
         os.system('./easyPET_edugate_analyser '+str(pathName)+' '+str(time_window)+' '+str(scannerType)+' '+str(self.energy_threshold_lower)+' '+str(self.energy_threshold_upper))
         self.EnergyPlot()
         try:
